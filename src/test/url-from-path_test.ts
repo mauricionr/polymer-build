@@ -12,14 +12,15 @@
  * http://polymer.github.io/PATENTS.txt
  */
 
-'use strict';
+/// <reference path="../../node_modules/@types/mocha/index.d.ts" />
 
-const assert = require('chai').assert;
-const urlFromPath = require('../lib/path-transformers').urlFromPath;
+
+import {assert} from 'chai';
+const urlFromPath = require('../path-transformers').urlFromPath;
 
 const WIN_ROOT_PATH = 'C:\\Users\\TEST_USER\\TEST_ROOT';
 const MAC_ROOT_PATH = '/Users/TEST_USER/TEST_ROOT';
-var isPlatformWin = /^win/.test(process.platform);
+const isPlatformWin = /^win/.test(process.platform);
 
 suite('urlFromPath()', () => {
 

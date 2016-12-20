@@ -12,22 +12,23 @@
  * http://polymer.github.io/PATENTS.txt
  */
 
-'use strict';
+/// <reference path="../../node_modules/@types/mocha/index.d.ts" />
 
-const assert = require('chai').assert;
+
+import {assert} from 'chai';
+import {PolymerProject} from '../polymer-project';
 const fs = require('fs');
 const path = require('path');
 const temp = require('temp').track();
 const vfs = require('vinyl-fs');
 const mergeStream = require('merge-stream');
 
-const PolymerProject = require('../lib/polymer-project').PolymerProject;
-const serviceWorker = require('../lib/service-worker');
+const serviceWorker = require('../service-worker');
 
 suite('service-worker', () => {
 
-  let testBuildRoot;
-  let defaultProject;
+  let testBuildRoot: string;
+  let defaultProject: PolymerProject;
 
   setup((done) => {
 
@@ -40,7 +41,7 @@ suite('service-worker', () => {
       ],
     });
 
-    temp.mkdir('polymer-build-test', (err, dir) => {
+    temp.mkdir('polymer-build-test', (err: Error, dir?: string) => {
       if (err) {
         return done(err);
       }
@@ -57,7 +58,9 @@ suite('service-worker', () => {
     });
   });
 
-  teardown((done) => {temp.cleanup(done)});
+  teardown((done) => {
+    temp.cleanup(done);
+  });
 
   suite('generateServiceWorker()', () => {
 
@@ -67,7 +70,7 @@ suite('service-worker', () => {
             assert.fail(
                 'generateServiceWorker() resolved, expected rejection!');
           },
-          (error) => {
+          (error: Error) => {
             assert.equal(error.name, 'AssertionError');
             assert.equal(
                 error.message, '`project` & `buildRoot` options are required');
@@ -81,7 +84,7 @@ suite('service-worker', () => {
                 assert.fail(
                     'generateServiceWorker() resolved, expected rejection!');
               },
-              (error) => {
+              (error: Error) => {
                 assert.equal(error.name, 'AssertionError');
                 assert.equal(error.message, '`project` option is required');
               });
@@ -94,21 +97,21 @@ suite('service-worker', () => {
                 assert.fail(
                     'generateServiceWorker() resolved, expected rejection!');
               },
-              (error) => {
+              (error: Error) => {
                 assert.equal(error.name, 'AssertionError');
                 assert.equal(error.message, '`buildRoot` option is required');
               });
     });
 
     test('should not modify the options object provided when called', () => {
-      const swPrecacheConfig = {staticFileGlobs: []};
+      const swPrecacheConfig = {staticFileGlobs: <string[]>[]};
       return serviceWorker
           .generateServiceWorker({
             project: defaultProject,
             buildRoot: testBuildRoot,
             swPrecacheConfig: swPrecacheConfig,
           })
-          .then((swCode) => {
+          .then(() => {
             assert.equal(swPrecacheConfig.staticFileGlobs.length, 0);
           });
     });
@@ -121,7 +124,7 @@ suite('service-worker', () => {
                 project: defaultProject,
                 buildRoot: testBuildRoot,
               })
-              .then((swCode) => {
+              .then((swCode: Buffer) => {
                 assert.ok(swCode instanceof Buffer);
               });
         });
@@ -134,7 +137,7 @@ suite('service-worker', () => {
                 project: defaultProject,
                 buildRoot: testBuildRoot,
               })
-              .then((swFile) => {
+              .then((swFile: Buffer) => {
                 const fileContents = swFile.toString();
                 assert.include(fileContents, path.join('"/index.html"'));
                 assert.include(fileContents, path.join('"/shell.html"'));
@@ -154,7 +157,7 @@ suite('service-worker', () => {
                 buildRoot: testBuildRoot,
                 bundled: true,
               })
-              .then((swFile) => {
+              .then((swFile: Buffer) => {
                 const fileContents = swFile.toString();
                 assert.include(fileContents, path.join('"/index.html"'));
                 assert.include(fileContents, path.join('"/shell.html"'));
@@ -177,7 +180,7 @@ suite('service-worker', () => {
               staticFileGlobs: ['/bower_components/dep.html'],
             },
           })
-          .then((swFile) => {
+          .then((swFile: Buffer) => {
             const fileContents = swFile.toString();
             assert.include(fileContents, path.join('"/index.html"'));
             assert.include(fileContents, path.join('"/shell.html"'));

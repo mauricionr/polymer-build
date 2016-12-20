@@ -12,75 +12,78 @@
  * http://polymer.github.io/PATENTS.txt
  */
 
-'use strict';
+/// <reference path="../../node_modules/@types/mocha/index.d.ts" />
 
-const assert = require('chai').assert;
+
+import {assert} from 'chai';
+import {PolymerProject} from '../polymer-project';
+import File = require('vinyl');
 const path = require('path');
 const stream = require('stream');
-const File = require('vinyl');
 
-const waitFor = require('../lib/streams').waitFor;
-const PolymerProject = require('../lib/polymer-project').PolymerProject;
+const waitFor = require('../streams').waitFor;
 const testProjectRoot = path.resolve(__dirname, 'static/test-project');
 
 suite('PolymerProject', () => {
 
-  let defaultProject;
+  let defaultProject: PolymerProject;
 
-  const unroot = (p) => p.substring(testProjectRoot.length + 1);
+  const unroot = ((p: string) => p.substring(testProjectRoot.length + 1));
 
   setup(() => {
     defaultProject = new PolymerProject({
-      root: 'test/static/test-project/',
+      root: 'src/test/static/test-project/',
       entrypoint: 'index.html',
       shell: 'shell.html',
       sources: [
         'source-dir/**',
       ],
     });
-  })
+  });
 
   test('will not throw an exception when created with minimum options', () => {
     new PolymerProject({
-      root: 'test/static/test-project/',
+      root: 'src/test/static/test-project/',
     });
   });
 
   test('reads sources', (done) => {
-    const files = [];
-    defaultProject.sources().on('data', (f) => files.push(f)).on('end', () => {
-      const names = files.map((f) => unroot(f.path));
-      const expected = [
-        'index.html',
-        'shell.html',
-        'source-dir/my-app.html',
-      ];
-      assert.sameMembers(names, expected);
-      done();
-    });
+    const files: File[] = [];
+    defaultProject.sources()
+        .on('data', (f: File) => files.push(f))
+        .on('end', () => {
+          const names = files.map((f) => unroot(f.path));
+          const expected = [
+            'index.html',
+            'shell.html',
+            'source-dir/my-app.html',
+          ];
+          assert.sameMembers(names, expected);
+          done();
+        });
   });
 
   test('the sources & dependencies streams remain paused until use', () => {
     // Check that data isn't flowing through sources until consumer usage
     const sourcesStream = defaultProject.sources();
-    assert.isNull(sourcesStream._readableState.flowing);
+    assert.isNull((<any>sourcesStream)._readableState.flowing);
     sourcesStream.on('data', () => {});
-    assert.isTrue(sourcesStream._readableState.flowing);
+    assert.isTrue((<any>sourcesStream)._readableState.flowing);
 
     // Check that data isn't flowing through dependencies until consumer
     // usage
     const dependencyStream = defaultProject.dependencies();
-    assert.isNull(dependencyStream._readableState.flowing);
+    assert.isNull((<any>dependencyStream)._readableState.flowing);
     dependencyStream.on('data', () => {});
-    assert.isTrue(dependencyStream._readableState.flowing);
+    assert.isTrue((<any>dependencyStream)._readableState.flowing);
   });
 
   suite('.dependencies()', () => {
 
     test('reads dependencies', (done) => {
-      const files = [];
+      const files: File[] = [];
       const dependencyStream = defaultProject.dependencies();
-      dependencyStream.on('data', (f) => files.push(f));
+      dependencyStream.on('data', (f: File) => files.push(f));
       dependencyStream.on('end', () => {
         const names = files.map((f) => unroot(f.path));
         const expected = [
@@ -113,7 +116,7 @@ suite('PolymerProject', () => {
     test(
         'reads dependencies and includes additionally provided files',
         (done) => {
-          const files = [];
+          const files: File[] = [];
           const projectWithIncludedDeps = new PolymerProject({
             root: testProjectRoot,
             entrypoint: 'index.html',
@@ -127,7 +130,7 @@ suite('PolymerProject', () => {
           });
 
           const dependencyStream = projectWithIncludedDeps.dependencies();
-          dependencyStream.on('data', (f) => files.push(f));
+          dependencyStream.on('data', (f: File) => files.push(f));
           dependencyStream.on('error', done);
           dependencyStream.on('end', () => {
             const names = files.map((f) => unroot(f.path));
@@ -148,9 +151,9 @@ suite('PolymerProject', () => {
     const joinedFiles = new Map();
     defaultProject.sources()
         .pipe(defaultProject.splitHtml())
-        .on('data', (f) => splitFiles.set(unroot(f.path), f))
+        .on('data', (f: File) => splitFiles.set(unroot(f.path), f))
         .pipe(defaultProject.rejoinHtml())
-        .on('data', (f) => joinedFiles.set(unroot(f.path), f))
+        .on('data', (f: File) => joinedFiles.set(unroot(f.path), f))
         .on('end', () => {
           const expectedSplitFiles = [
             'index.html',
@@ -201,7 +204,7 @@ suite('PolymerProject', () => {
 
     sourceStream.pipe(defaultProject.splitHtml())
         .on('data',
-            (file) => {
+            (file: File) => {
               // this is what gulp-html-minifier does...
               if (path.sep === '\\' && file.path.endsWith('.html')) {
                 file.path = file.path.replace('\\', '/');
@@ -209,12 +212,12 @@ suite('PolymerProject', () => {
             })
         .pipe(defaultProject.rejoinHtml())
         .on('data',
-            (file) => {
+            (file: File) => {
               const contents = file.contents.toString();
               assert.equal(contents, source);
             })
-        .on('finish', () => done())
-        .on('error', (error) => done(error));
+        .on('finish', done)
+        .on('error', done);
 
     sourceStream.push(file);
     sourceStream.push(null);
