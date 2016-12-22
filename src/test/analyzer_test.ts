@@ -271,11 +271,13 @@ suite('Analyzer', () => {
     // Cast analyzer to <any> so that we can check private properties of it.
     // We need to access these private streams directly because the public
     // `sources()` and `dependencies()` functions have intentional side effects
-    // that we are trying to test here.
+    // related to these streams that we are trying to test here.
     const analyzerWithPrivates: any = analyzer;
-    assert.isNull(getFlowingState(analyzerWithPrivates._sourcesStream));
-    assert.isNull(getFlowingState(analyzerWithPrivates._dependenciesStream));
+    assert.isUndefined(analyzerWithPrivates._sourcesStream);
+    assert.isUndefined(analyzerWithPrivates._dependenciesStream);
     analyzerWithPrivates.sources();
+    assert.isDefined(analyzerWithPrivates._sourcesStream);
+    assert.isDefined(analyzerWithPrivates._dependenciesStream);
     assert.isTrue(getFlowingState(analyzerWithPrivates._sourcesStream));
     assert.isTrue(getFlowingState(analyzerWithPrivates._dependenciesStream));
 

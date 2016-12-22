@@ -173,13 +173,6 @@ export class BuildAnalyzer {
     this.analyzeDependencies = new Promise((resolve, _reject) => {
       this._resolveDependencyAnalysis = resolve;
     });
-
-    // Create the base streams for sources & dependencies to be read from.
-    this._dependenciesStream = new PassThrough({objectMode: true});
-    this._sourcesStream = vinylSrc(this.config.sources, {
-      cwdbase: true,
-      nodir: true,
-    });
   }
 
   /**
@@ -193,6 +186,13 @@ export class BuildAnalyzer {
       return;
     }
     this.started = true;
+
+    // Create the base streams for sources & dependencies to be read from.
+    this._dependenciesStream = new PassThrough({objectMode: true});
+    this._sourcesStream = vinylSrc(this.config.sources, {
+      cwdbase: true,
+      nodir: true,
+    });
 
     // _sourcesProcessingStream: Pipe the sources stream through...
     //   1. The resolver stream, to resolve each file loaded via the analyzer
