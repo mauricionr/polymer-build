@@ -232,6 +232,11 @@ suite('Analyzer', () => {
 
     const analyzer = new BuildAnalyzer(config);
 
+    // Cast our streams to <any> so that we can check the flowing state.
+    // _readableState is undocumented in the Node.js TypeScript definition,
+    // however it is the supported way to assert if a stream is flowing or not.
+    // See: https://nodejs.org/api/stream.html#stream_three_states
+
     // Check that data isn't flowing through sources until consumer usage
     assert.isNull((<any>analyzer.sources)._readableState.flowing);
     analyzer.sources.on('data', () => {});
