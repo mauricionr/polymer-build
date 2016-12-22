@@ -28,7 +28,7 @@ const bundle = require('../bundle');
 const Bundler = bundle.Bundler;
 const BuildAnalyzer = analyzer.BuildAnalyzer;
 
-const root = path.resolve('src/test/static/bundler-data');
+const root = path.resolve('test-fixtures/bundler-data');
 
 suite('Bundler', () => {
 

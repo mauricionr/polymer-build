@@ -44,7 +44,7 @@ suite('Analyzer', () => {
 
     test('fragment to deps list has only uniques', () => {
       const config = new ProjectConfig({
-        root: `src/test/static/analyzer-data`,
+        root: `test-fixtures/analyzer-data`,
         entrypoint: 'entrypoint.html',
         fragments: [
           'a.html',
@@ -71,7 +71,7 @@ suite('Analyzer', () => {
     });
 
     test('analyzing shell and entrypoint doesn\'t double load files', () => {
-      const root = `src/test/static/analyzer-data`;
+      const root = `test-fixtures/analyzer-data`;
       const sourceFiles =
           ['shell.html', 'entrypoint.html'].map((p) => path.resolve(root, p));
       const config = new ProjectConfig({
@@ -102,7 +102,7 @@ suite('Analyzer', () => {
 
     test('outputs all dependencies needed by source', () => {
       const foundDependencies = new Set();
-      const root = `src/test/static/analyzer-data`;
+      const root = `test-fixtures/analyzer-data`;
       const sourceFiles =
           ['shell.html', 'entrypoint.html'].map((p) => path.resolve(root, p));
       const config = new ProjectConfig({
@@ -132,7 +132,7 @@ suite('Analyzer', () => {
     test(
         'outputs all dependencies needed by source and given fragments', () => {
           const foundDependencies = new Set();
-          const root = `src/test/static/analyzer-data`;
+          const root = `test-fixtures/analyzer-data`;
           const sourceFiles =
               ['a.html', 'b.html', 'shell.html', 'entrypoint.html'].map(
                   (p) => path.resolve(root, p));
@@ -169,7 +169,7 @@ suite('Analyzer', () => {
   test(
       'the analyzer stream will emit an error when an warning of type "error" occurs during analysis',
       () => {
-        const root = path.resolve('src/test/static/project-analysis-error');
+        const root = path.resolve('test-fixtures/project-analysis-error');
         const sourceFiles = path.join(root, '**');
         const config = new ProjectConfig({
           root: root,
@@ -195,7 +195,7 @@ suite('Analyzer', () => {
   test(
       'the analyzer stream will log all analysis warnings at the end of the stream',
       () => {
-        const root = path.resolve('src/test/static/project-analysis-error');
+        const root = path.resolve('test-fixtures/project-analysis-error');
         const sourceFiles = path.join(root, '**');
         const config = new ProjectConfig({
           root: root,
@@ -221,7 +221,7 @@ suite('Analyzer', () => {
 
   test('the source/dependency streams remain paused until use', () => {
     const config = new ProjectConfig({
-      root: `src/test/static/analyzer-data`,
+      root: `test-fixtures/analyzer-data`,
       entrypoint: 'entrypoint.html',
       fragments: [
         'a.html',

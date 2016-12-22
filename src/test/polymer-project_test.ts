@@ -22,7 +22,7 @@ const path = require('path');
 const stream = require('stream');
 
 const waitFor = require('../streams').waitFor;
-const testProjectRoot = path.resolve(__dirname, 'static/test-project');
+const testProjectRoot = path.resolve('test-fixtures/test-project');
 
 suite('PolymerProject', () => {
 
@@ -32,7 +32,7 @@ suite('PolymerProject', () => {
 
   setup(() => {
     defaultProject = new PolymerProject({
-      root: 'src/test/static/test-project/',
+      root: 'test-fixtures/test-project/',
       entrypoint: 'index.html',
       shell: 'shell.html',
       sources: [
@@ -43,7 +43,7 @@ suite('PolymerProject', () => {
 
   test('will not throw an exception when created with minimum options', () => {
     new PolymerProject({
-      root: 'src/test/static/test-project/',
+      root: 'test-fixtures/test-project/',
     });
   });
 

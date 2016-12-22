@@ -38,9 +38,7 @@ gulp.task('clean', (done) => {
 gulp.task('build', ['clean'], () => {
   const tsResult = tsProject.src().pipe(typescript(tsProject));
 
-  return mergeStream(
-             tsResult.dts, tsResult.js, gulp.src(['src/**/*', '!src/**/*.ts']))
-      .pipe(gulp.dest('lib'));
+  return mergeStream(tsResult.dts, tsResult.js).pipe(gulp.dest('lib'));
 });
 
 gulp.task('test', ['build'], function() {
