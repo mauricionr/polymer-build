@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+* `BuildAnalyzer.sources` & `BuildAnalyzer.dependencies` are now `BuildAnalyzer.sources()` & `BuildAnalyzer.dependencies()`, respectively. This change only affects uses who are importing and/or using the `BuildAnalyzer` class directly.
+* Fix issue where files were being loaded immediately, before the build stream was started.
+
 ## [0.6.0-alpha.3] - 2016-12-19
 
 * Actually update the version of polymer-analyzer we use, fixing a number of errors. (alpha.2 was accidentally a noop release).
