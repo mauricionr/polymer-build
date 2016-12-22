@@ -21,6 +21,7 @@ import {ProjectConfig} from 'polymer-project-config';
 import * as sinon from 'sinon';
 import {Writable} from 'stream';
 
+import {getFlowingState} from './util';
 import {BuildAnalyzer} from '../analyzer';
 import {waitForAll} from '../streams';
 
@@ -232,20 +233,15 @@ suite('Analyzer', () => {
 
     const analyzer = new BuildAnalyzer(config);
 
-    // Cast our streams to <any> so that we can check the flowing state.
-    // _readableState is undocumented in the Node.js TypeScript definition,
-    // however it is the supported way to assert if a stream is flowing or not.
-    // See: https://nodejs.org/api/stream.html#stream_three_states
-
     // Check that data isn't flowing through sources until consumer usage
-    assert.isNull((<any>analyzer.sources)._readableState.flowing);
+    assert.isNull(getFlowingState(analyzer.sources));
     analyzer.sources.on('data', () => {});
-    assert.isTrue((<any>analyzer.sources)._readableState.flowing);
+    assert.isTrue(getFlowingState(analyzer.sources));
 
     // Check that data isn't flowing through dependencies until consumer usage
-    assert.isNull((<any>analyzer.dependencies)._readableState.flowing);
+    assert.isNull(getFlowingState(analyzer.dependencies));
     analyzer.dependencies.on('data', () => {});
-    assert.isTrue((<any>analyzer.dependencies)._readableState.flowing);
+    assert.isTrue(getFlowingState(analyzer.dependencies));
   });
 
   // TODO(fks) 10-26-2016: Refactor logging to be testable, and configurable by

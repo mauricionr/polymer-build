@@ -20,6 +20,7 @@ import File = require('vinyl');
 import * as path from 'path';
 import * as stream from 'stream';
 
+import {getFlowingState} from './util';
 import {PolymerProject} from '../polymer-project';
 import {waitFor} from '../streams';
 
@@ -65,24 +66,17 @@ suite('PolymerProject', () => {
   });
 
   test('the sources & dependencies streams remain paused until use', () => {
-
-    // Cast our streams to <any> so that we can check the flowing state.
-    // _readableState is undocumented in the Node.js TypeScript definition,
-    // however it is the supported way to assert if a stream is flowing or not.
-    // See: https://nodejs.org/api/stream.html#stream_three_states
-
     // Check that data isn't flowing through sources until consumer usage
     const sourcesStream = defaultProject.sources();
-    assert.isNull((<any>sourcesStream)._readableState.flowing);
+    assert.isNull(getFlowingState(sourcesStream));
     sourcesStream.on('data', () => {});
-    assert.isTrue((<any>sourcesStream)._readableState.flowing);
+    assert.isTrue(getFlowingState(sourcesStream));
 
-    // Check that data isn't flowing through dependencies until consumer
-    // usage
+    // Check that data isn't flowing through dependencies until consumer usage
     const dependencyStream = defaultProject.dependencies();
-    assert.isNull((<any>dependencyStream)._readableState.flowing);
+    assert.isNull(getFlowingState(dependencyStream));
     dependencyStream.on('data', () => {});
-    assert.isTrue((<any>dependencyStream)._readableState.flowing);
+    assert.isTrue(getFlowingState(dependencyStream));
   });
 
   suite('.dependencies()', () => {
