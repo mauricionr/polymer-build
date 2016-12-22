@@ -16,12 +16,13 @@
 
 
 import {assert} from 'chai';
-import {PolymerProject} from '../polymer-project';
 import File = require('vinyl');
-const path = require('path');
-const stream = require('stream');
+import * as path from 'path';
+import * as stream from 'stream';
 
-const waitFor = require('../streams').waitFor;
+import {PolymerProject} from '../polymer-project';
+import {waitFor} from '../streams';
+
 const testProjectRoot = path.resolve('test-fixtures/test-project');
 
 suite('PolymerProject', () => {

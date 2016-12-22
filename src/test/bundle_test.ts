@@ -19,14 +19,11 @@ import {ProjectConfig, ProjectOptions} from 'polymer-project-config';
 import File = require('vinyl');
 import * as dom5 from 'dom5';
 import {ASTNode, parse as parse5} from 'parse5';
-const path = require('path');
+import * as path from 'path';
 const mergeStream = require('merge-stream');
 
-const analyzer = require('../analyzer');
-const bundle = require('../bundle');
-
-const Bundler = bundle.Bundler;
-const BuildAnalyzer = analyzer.BuildAnalyzer;
+import {BuildAnalyzer} from '../analyzer';
+import {Bundler} from '../bundle';
 
 const root = path.resolve('test-fixtures/bundler-data');
 

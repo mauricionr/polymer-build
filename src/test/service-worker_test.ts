@@ -16,14 +16,14 @@
 
 
 import {assert} from 'chai';
-import {PolymerProject} from '../polymer-project';
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as vfs from 'vinyl-fs';
 const temp = require('temp').track();
-const vfs = require('vinyl-fs');
 const mergeStream = require('merge-stream');
 
-const serviceWorker = require('../service-worker');
+import {PolymerProject} from '../polymer-project';
+import * as serviceWorker from '../service-worker';
 
 suite('service-worker', () => {
 
@@ -65,7 +65,7 @@ suite('service-worker', () => {
   suite('generateServiceWorker()', () => {
 
     test('should throw when options are not provided', () => {
-      return serviceWorker.generateServiceWorker().then(
+      return (<any>serviceWorker.generateServiceWorker)().then(
           () => {
             assert.fail(
                 'generateServiceWorker() resolved, expected rejection!');
@@ -78,7 +78,8 @@ suite('service-worker', () => {
     });
 
     test('should throw when options.project is not provided', () => {
-      return serviceWorker.generateServiceWorker({buildRoot: testBuildRoot})
+      return (<any>serviceWorker.generateServiceWorker)(
+                 {buildRoot: testBuildRoot})
           .then(
               () => {
                 assert.fail(
@@ -91,7 +92,8 @@ suite('service-worker', () => {
     });
 
     test('should throw when options.buildRoot is not provided', () => {
-      return serviceWorker.generateServiceWorker({project: defaultProject})
+      return (<any>serviceWorker.generateServiceWorker)(
+                 {project: defaultProject})
           .then(
               () => {
                 assert.fail(
